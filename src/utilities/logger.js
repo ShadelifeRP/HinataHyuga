@@ -149,7 +149,7 @@ class Logger {
     };
 
     createNewLogger(components) {
-        return new KoalatyLogger({
+        return new Logger({
             parent: this,
             components
         })
