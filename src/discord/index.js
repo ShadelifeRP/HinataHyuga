@@ -20,8 +20,12 @@ class IntegrationDiscord extends BaseIntegration {
             this.getLogger().info('Ready...');
 
             this.getClient().user.setPresence({
-                game: 'Awaiting server ping...'
-            });
+                activity: {
+                    name: 'For Server Ping...',
+                    type: 'LISTENING'
+                },
+                status: "idle"
+            }).catch(this.getLogger().warning.bind(this.getLogger()));
         });
     }
 
