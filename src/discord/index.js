@@ -27,10 +27,36 @@ class IntegrationDiscord extends BaseIntegration {
                 status: "idle"
             }).catch(this.getLogger().warning.bind(this.getLogger()));
         });
+
+        this.getClient().on('message', this.onEventMessage.bind(this));
     }
 
     async run() {
         return this.getClient().login(this.getOption('token'));
+    }
+
+    onEventMessage(message) {
+        if (!message || !message.author || message.author.bot) {
+            return;
+        }
+
+        let content = message.content.trim();
+
+        if (!this.isCommand(content)) {
+            return;
+        }
+
+        content = this.stripCommandPrefix(content);
+
+        message.reply(content);
+    }
+
+    isCommand(text) {
+        return text.startsWith(this.getOption('cmd_prefix')) || text.startsWith(`<@!${this.getClient().user.id}>`) || text.startsWith(`<@${this.getClient().user.id}>`);
+    }
+
+    stripCommandPrefix(content) {
+        return content.startsWith(this.getOption('cmd_prefix')) ? content.slice(this.getOption('cmd_prefix').length) : content.split(' ').slice(1).join(' ');
     }
 
     getClient() {

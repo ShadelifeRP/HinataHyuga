@@ -3,6 +3,9 @@ const DEFAULT_OPTIONS = {
     mongodb: {
         useNewUrlParser: true,
         useUnifiedTopology: true
+    },
+    discord: {
+        cmd_prefix: 'h$'
     }
 };
 const IntegrationDiscord = require('./discord/index.js');
