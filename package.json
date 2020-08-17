@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/ShadelifeRP/HinataHyuga#readme",
   "dependencies": {
+    "codingseaotter-uuid": "^1.0.0",
     "discord.js": "^12.3.1",
     "moment": "^2.27.0",
     "mongodb": "^3.6.0",
