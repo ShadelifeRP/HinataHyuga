@@ -9,7 +9,6 @@ class IntegrationFXServer extends BaseIntegration {
 
     async run() {
         this.servers = await this.getHinata().getIntegrationMongoDB().findAllFXServers();
-        console.log('Found', Object.keys(this.getServers()).length, 'servers');
     }
 
     getServers() {
