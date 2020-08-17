@@ -1,5 +1,7 @@
 const BaseIntegration = require('../utilities/baseintegration.js');
 const {MongoClient} = require('mongodb');
+const {FXServer: FunctionsFXServer} = require('./functions/index.js');
+const ModelFXServer = require('./model/fxserver.js');
 
 class IntegrationMongoDB extends BaseIntegration {
     constructor(...args) {
@@ -23,6 +25,26 @@ class IntegrationMongoDB extends BaseIntegration {
         this.client = await MongoClient.connect(this.getOption('url'), connection_options);
         this.database = this.getClient().db();
         this.getLogger().info('Connected');
+    }
+
+    async provisionFXServer({address}) {
+        const document = await FunctionsFXServer.provisionFXServer({database: this}, {address});
+
+        return new ModelFXServer(document, this.getHinata());
+    }
+
+    async findAllFXServers() {
+        const documents = await FunctionsFXServer.findAll({database: this});
+
+        return documents.reduce((prev, next) => {
+            try {
+                prev[next._id] = new ModelFXServer(next, this.getHinata());
+            } catch (e) {
+
+            }
+
+            return prev;
+        }, {});
     }
 
     getClient() {
