@@ -11,7 +11,7 @@ const setup = (hinata, options = {}) => {
                 data = {
                     message: data.message,
                     name: data.name,
-                    stack_trace: hinata.getOption('mode', 'development') === 'production' ? undefined : data.stack
+                    stack_trace: hinata.getOption('mode', 'production') === 'development' ? data.stack : undefined
                 };
             }
 
@@ -19,7 +19,12 @@ const setup = (hinata, options = {}) => {
                 data = data.toString('base64');
             }
 
-            data = format(data);
+            try {
+                data = format(data);
+            } catch (e) {
+                return hinata.getIntegrationREST().handleError(e, request, response);
+            }
+
             response.statusCode = code;
             response.setHeader('Content-Type', 'application/json');
             response.setHeader('Content-Length', Buffer.byteLength(data));
