@@ -28,7 +28,7 @@ class CommandSteamPlayerLookup extends DiscordCommand {
                 .setTitle("Player Profile")
                 .setURL(player.url)
                 .setAuthor(player.nickname || player.real_name, player.avatar)
-                .setDescription('This player have an excellent standing with Steam.')
+                .setDescription('This player has an excellent standing with Steam.')
                 .setFooter(BigInt(id64).toString(16))
 
             if (!player.is_clean) {
