@@ -159,6 +159,10 @@ class DiscordCommand {
             })
         ].filter(element => !!element).join(' ');
     }
+
+    getIntegrationDiscord() {
+        return this.getHinata().getIntegrationDiscord();
+    }
 }
 
 

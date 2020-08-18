@@ -11,6 +11,7 @@ const DEFAULT_OPTIONS = {
 const IntegrationDiscord = require('./discord/index.js');
 const IntegrationMongoDB = require('./mongodb/index.js');
 const IntegrationFXServer = require('./fxserver/index.js');
+const IntegrationSteam = require('./steam/index.js');
 const IntegrationREST = require('./rest/index.js');
 
 class HinataHyuga {
@@ -20,6 +21,7 @@ class HinataHyuga {
         this.integration_mongodb = new IntegrationMongoDB(this);
         this.integration_discord = new IntegrationDiscord(this);
         this.integration_fxserver = new IntegrationFXServer(this);
+        this.integration_steam = new IntegrationSteam(this);
         this.integration_rest = new IntegrationREST(this);
     }
 
@@ -27,6 +29,7 @@ class HinataHyuga {
         await this.getIntegrationMongoDB().run();
         await this.getIntegrationDiscord().run();
         await this.getIntegrationFXServer().run();
+        await this.getIntegrationSteam().run();
         await this.getIntegrationREST().run();
     }
 
@@ -40,6 +43,10 @@ class HinataHyuga {
 
     getIntegrationFXServer() {
         return this.integration_fxserver;
+    }
+
+    getIntegrationSteam() {
+        return this.integration_steam;
     }
 
     getIntegrationREST() {

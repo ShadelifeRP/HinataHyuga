@@ -3,6 +3,7 @@ const BaseIntegration = require('../utilities/baseintegration.js');
 const {DiscordMissingCommandArgumentError, DiscordInvalidCommandArgumentError} = require('../utilities/errors/index.js');
 const CommandProvisionFXServer = require('./commands/provisionfxserver.js');
 const CommandHelp = require('./commands/help.js');
+const CommandSteamPlayerLookup = require('./commands/steam_lookup.js');
 
 class IntegrationDiscord extends BaseIntegration {
     constructor(...args) {
@@ -12,6 +13,7 @@ class IntegrationDiscord extends BaseIntegration {
         this.commands = [
             new CommandProvisionFXServer(this.getHinata()),
             new CommandHelp(this.getHinata()),
+            new CommandSteamPlayerLookup(this.getHinata()),
         ];
         this.setupEvents();
     }
@@ -101,8 +103,6 @@ class IntegrationDiscord extends BaseIntegration {
     }
 
     addMessageToAutoDeletionPool(message, time = 10) {
-        //TODO: Remove for production release
-        return;
         setTimeout(() => {
             try {
                 message.delete().catch(e => {
