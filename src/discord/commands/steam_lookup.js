@@ -31,7 +31,6 @@ class CommandSteamPlayerLookup extends DiscordCommand {
                 .setDescription('This player has an excellent standing with Steam.')
                 .setFooter(BigInt(id64).toString(16))
 
-
             if (!player.is_clean) {
                 player_message
                     .setColor(0xFF0000)
