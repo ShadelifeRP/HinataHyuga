@@ -54,6 +54,10 @@ class DiscordCommand {
             processed_args[arg_specification.name] = this.processArg(args[index], arg_specification);
         }
 
+        if(this.getArgSpecifications().length < args.length) {
+            processed_args._ =  args.slice(this.getArgSpecifications().length).join(" ");
+        }
+
         return processed_args;
     }
 
