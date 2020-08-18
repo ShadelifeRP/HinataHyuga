@@ -19,4 +19,8 @@ const mergeDeep = (...objects) => {
     }, {});
 };
 
-module.exports = {mergeDeep};
+const capitalize = (str) => {
+    return [str.charAt(0).toUpperCase(), str.slice(1)].join('');
+}
+
+module.exports = {mergeDeep, capitalize};

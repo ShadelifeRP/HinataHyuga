@@ -18,6 +18,16 @@ class IntegrationFXServer extends BaseIntegration {
     getServer(_id) {
         return this.servers[_id];
     }
+
+    getServerByDiscordID(guild_id) {
+        for (const server of Object.values(this.getServers())) {
+            if (server.getGuildID() === guild_id) {
+                return server;
+            }
+        }
+
+        return undefined;
+    }
 }
 
 module.exports = IntegrationFXServer;
