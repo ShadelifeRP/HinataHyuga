@@ -27,8 +27,12 @@ class IntegrationMongoDB extends BaseIntegration {
         this.getLogger().info('Connected');
     }
 
-    async provisionFXServer({address}) {
-        const document = await FunctionsFXServer.provisionFXServer({database: this}, {address});
+    async provisionFXServer({address, guild_id}) {
+        const document = await FunctionsFXServer.provisionFXServer({database: this.getDatabase()}, {
+            address,
+            guild_id,
+            api_key: ModelFXServer.createAPIKey()
+        });
 
         return new ModelFXServer(document, this.getHinata());
     }

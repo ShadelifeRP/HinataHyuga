@@ -1,5 +1,8 @@
 const DatabaseModel = require('./index.js');
 const {MessageEmbed} = require('discord.js');
+const {v5: {generate: generateV5UUID}, v4: {generate: generateV4UUID}} = require('codingseaotter-uuid');
+const {API_KEY_NAMESPACE} = require('../../utilities/constants.js');
+const {updateAPIKey} = require('../functions/fxserver.js');
 
 class ModelFXServer extends DatabaseModel {
     _normalizeV1() {
@@ -110,6 +113,22 @@ class ModelFXServer extends DatabaseModel {
             name: discord_user.displayName,
             avatar: discord_user.user.displayAvatarURL({format: 'png'})
         };
+    }
+
+    async refreshAPIKey() {
+        const api_key = ModelFXServer.createAPIKey();
+
+        if (!(await updateAPIKey({database: this.getHinata().getIntegrationMongoDB().getDatabase()}, this.getID(), api_key))) {
+            return false;
+        }
+
+        this.api_key = api_key;
+
+        return true;
+    }
+
+    static createAPIKey() {
+        return generateV5UUID(generateV4UUID(), API_KEY_NAMESPACE);
     }
 
     getGuildID() {
