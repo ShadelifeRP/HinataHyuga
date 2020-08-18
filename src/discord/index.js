@@ -2,6 +2,7 @@ const {Client: DiscordClient, MessageEmbed} = require('discord.js');
 const BaseIntegration = require('../utilities/baseintegration.js');
 const {DiscordMissingCommandArgumentError, DiscordInvalidCommandArgumentError} = require('../utilities/errors/index.js');
 const CommandProvisionFXServer = require('./commands/provisionfxserver.js');
+const CommandFXServerInfo = require('./commands/fxserverinfo.js');
 const CommandHelp = require('./commands/help.js');
 const CommandSteamPlayerLookup = require('./commands/steam_lookup.js');
 
@@ -12,6 +13,7 @@ class IntegrationDiscord extends BaseIntegration {
         this.client = new DiscordClient();
         this.commands = [
             new CommandProvisionFXServer(this.getHinata()),
+            new CommandFXServerInfo(this.getHinata()),
             new CommandHelp(this.getHinata()),
             new CommandSteamPlayerLookup(this.getHinata()),
         ];
