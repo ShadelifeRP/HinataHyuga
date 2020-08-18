@@ -11,6 +11,7 @@ const DEFAULT_OPTIONS = {
 const IntegrationDiscord = require('./discord/index.js');
 const IntegrationMongoDB = require('./mongodb/index.js');
 const IntegrationFXServer = require('./fxserver/index.js');
+const IntegrationREST = require('./rest/index.js');
 
 class HinataHyuga {
     constructor(options = {}, logger) {
@@ -19,12 +20,14 @@ class HinataHyuga {
         this.integration_mongodb = new IntegrationMongoDB(this);
         this.integration_discord = new IntegrationDiscord(this);
         this.integration_fxserver = new IntegrationFXServer(this);
+        this.integration_rest = new IntegrationREST(this);
     }
 
     async run() {
         await this.getIntegrationMongoDB().run();
         await this.getIntegrationDiscord().run();
         await this.getIntegrationFXServer().run();
+        await this.getIntegrationREST().run();
     }
 
     getIntegrationMongoDB() {
