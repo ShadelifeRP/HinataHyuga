@@ -1,5 +1,7 @@
 const DatabaseModel = require('./index.js');
 const {MessageEmbed} = require('discord.js');
+const http = require('http');
+const url = require('url');
 const {v5: {generate: generateV5UUID}, v4: {generate: generateV4UUID}} = require('codingseaotter-uuid');
 const {API_KEY_NAMESPACE} = require('../../utilities/constants.js');
 const {updateAPIKey} = require('../functions/fxserver.js');
@@ -8,7 +10,7 @@ class ModelFXServer extends DatabaseModel {
     _normalizeV1() {
         const {address, api_key, guild, loggables, roles} = this.getDocument();
 
-        if (!address || !address.ip || !address.port) {
+        if (!address || !address.host || !address.port) {
             throw new Error('Missing Address');
         }
 
@@ -130,6 +132,51 @@ class ModelFXServer extends DatabaseModel {
     static createAPIKey() {
         return generateV5UUID(generateV4UUID(), API_KEY_NAMESPACE);
     }
+
+    static getServerInfoURL(host, port = 30120) {
+        return url.format({
+            hostname: host,
+            port,
+            protocol: 'http',
+            pathname: '/info.json'
+        });
+    }
+
+    static getServerInfo(host, port) {
+        const info_url = ModelFXServer.getServerInfoURL(host, port);
+
+        return new Promise((resolve, reject) => {
+            http.get(info_url, response => {
+                const {
+                    statusCode: status_code
+                } = response;
+                const content_type = response.headers['content-type'];
+
+                if (status_code !== 200) {
+                    response.resume();
+                    return reject(new Error('Invalid Response'));
+                }
+
+                let data = '';
+
+                response.setEncoding('utf8');
+                response.on('data', chunk => data += chunk);
+                response.on('error', error => {
+                    response.resume();
+
+                    return reject(error);
+                });
+                response.on('end', () => {
+                    try {
+                        return resolve(JSON.parse(data));
+                    } catch (e) {
+                        return reject(e);
+                    }
+                });
+            }).on('error', error => reject(error));
+        });
+    }
+
 
     getGuildID() {
         return this.guild;

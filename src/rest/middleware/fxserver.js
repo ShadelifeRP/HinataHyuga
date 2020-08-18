@@ -14,7 +14,7 @@ module.exports = (request, response, next) => {
 
         const fxserver = request.getHinata().getIntegrationFXServer().getServer(hinata_fxserver_id);
 
-        if (!fxserver || !fxserver.api_key === hinta_fxserver_key) {
+        if (!fxserver || fxserver.getAPIKey() !== hinta_fxserver_key) {
             const error = new Error('Invalid ID/Key');
             error.code = 401;
 

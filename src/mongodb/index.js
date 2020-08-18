@@ -34,6 +34,8 @@ class IntegrationMongoDB extends BaseIntegration {
             api_key: ModelFXServer.createAPIKey()
         });
 
+        console.log(document);
+
         return new ModelFXServer(document, this.getHinata());
     }
 
@@ -44,7 +46,7 @@ class IntegrationMongoDB extends BaseIntegration {
             try {
                 prev[next._id] = new ModelFXServer(next, this.getHinata());
             } catch (e) {
-
+                this.getLogger().warning(`Ignoring FXServer ${next._id}: [${e.message}]`);
             }
 
             return prev;
