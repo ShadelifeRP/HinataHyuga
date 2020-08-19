@@ -5,6 +5,7 @@ const CommandProvisionFXServer = require('./commands/provisionfxserver.js');
 const CommandFXServerInfo = require('./commands/fxserverinfo.js');
 const CommandHelp = require('./commands/help.js');
 const CommandSteamPlayerLookup = require('./commands/steam_lookup.js');
+const {Hinata: HinataError} = require('../utilities/errors/index.js');
 
 class IntegrationDiscord extends BaseIntegration {
     constructor(...args) {
@@ -102,6 +103,31 @@ class IntegrationDiscord extends BaseIntegration {
                 this.getLogger().warning(e);
             }
         }
+    }
+
+    async getPlayerData(guild_id, user_id) {
+        if (!guild_id || !user_id) {
+            throw new HinataError(400, 'Missing Guild/User ID');
+        }
+
+        const discord_guild = await this.getClient().guilds.fetch(guild_id);
+
+        if (!discord_guild) {
+            throw new HinataError(409, 'No Such Guild');
+        }
+
+        const discord_user = await discord_guild.members.fetch(user_id);
+
+        if (!discord_user) {
+            throw new HinataError(404, 'No Such User In Guild');
+        }
+
+        return {
+            id: discord_user.id,
+            roles: discord_user.roles.cache.keyArray(),
+            name: discord_user.displayName,
+            avatar: discord_user.user.displayAvatarURL({format: 'png'})
+        };
     }
 
     addMessageToAutoDeletionPool(message, time = 10) {

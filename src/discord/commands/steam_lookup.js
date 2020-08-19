@@ -8,12 +8,12 @@ class CommandSteamPlayerLookup extends DiscordCommand {
             cmd: 'steam_player_lookup',
             name: 'Steam Player Lookup',
             aliases: ['spl', 'lookup'],
-            args: ['player_id:string:User ID, Hex ID, Custom URL Username or Profile URL'],
+            args: ['player_id:string:User ID, Hex ID, Custom URL Username or Profile URL', '?force:string:Force Full Detail'],
             description: "Looks up a player's credibility on steam."
         });
     }
 
-    async execute({message}, {player_id}) {
+    async execute({message}, {player_id, force = ''}) {
         const messages = [];
         messages.push(await message.channel.send(`Resolving Player: ${player_id}`));
 
@@ -31,7 +31,7 @@ class CommandSteamPlayerLookup extends DiscordCommand {
                 .setDescription('This player has an excellent standing with Steam.')
                 .setFooter(BigInt(id64).toString(16))
 
-            if (!player.is_clean) {
+            if (!player.is_clean || force.toLowerCase() === 'force') {
                 player_message
                     .setColor(0xFF0000)
                     .setDescription([
