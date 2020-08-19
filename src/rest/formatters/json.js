@@ -5,7 +5,7 @@ const format = (data) => {
 const setup = (hinata, options = {}) => {
     return (request, response, next) => {
         response.json = (data, code) => {
-            code = code || (data instanceof Error ? 500 : 200);
+            code = code || (data instanceof Error ? data.code ? data.code : 500 : 200);
 
             if (data instanceof Error) {
                 data = {
