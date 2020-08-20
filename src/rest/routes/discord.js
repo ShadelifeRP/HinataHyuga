@@ -10,20 +10,51 @@ const getDiscordUser = {
             return next(fxserver);
         }
 
-        const {
-            address,
-            guild: guild_id
-        } = fxserver;
         try {
-            const discord = await fxserver.getPlayerProfile(request.params.discord_id, 'steam id');
+            const player_data = await Promise.all([
+                request.getHinata().getIntegrationSteam().getPlayerInfo(BigInt('0x' + request.params.steam_id).toString('10')).then(player_data => ({steam: player_data})),
+                request.getHinata().getIntegrationDiscord().getPlayerData(fxserver.getGuildID(), request.params.discord_id).then(player_data => ({discord: player_data}))
+            ]).then(results => Object.assign({}, ...results));
 
-            return response.json(discord);
+            const relevant_roles = player_data.discord.roles
+                .filter((role_id) => {
+                    return fxserver.roles[role_id] !== undefined;
+                });
+            const priorities = relevant_roles.map(role_id => {
+                return fxserver.roles[role_id].priority;
+            }).sort();
+            const is_whitelisted = relevant_roles.map(role_id => {
+                return fxserver.roles[role_id].whitelisted
+
+            }).length > 0;
+            const privileges = relevant_roles.reduce((previous, role_id) => {
+                if (fxserver.roles[role_id] && fxserver.roles[role_id].privileges) {
+                    previous.push(...fxserver.roles[role_id].privileges);
+                }
+
+                return previous;
+            }, []);
+
+            return response.json({
+                avatar: player_data.discord.avatar,
+                roles: relevant_roles,
+                priority: priorities.length > 0 ? priorities[0] : 1,
+                name: player_data.discord.displayName,
+                is_clean: player_data.steam.is_clean,
+                whitelisted: is_whitelisted,
+                privileges
+            });
         } catch (e) {
+            if (e instanceof HinataError) {
+                return response.json(e);
+            }
+
             return next(e);
         }
     }
 };
 
+//Deprecated
 const verifyUser = {
     method: 'get',
     path: '/users/:discord_id/:steam_id/verify',
@@ -41,7 +72,7 @@ const verifyUser = {
             ]).then(results => Object.assign({}, ...results));
 
             if (!player_data.steam.is_clean) {
-                return response.json(new HinataError(401, "You're Steam Record doesn't satisfy this server's requirements."));
+                return response.json(new HinataError(401, "Your Steam Record doesn't satisfy this server's requirements."));
             }
 
             const relevant_roles = player_data.discord.roles
