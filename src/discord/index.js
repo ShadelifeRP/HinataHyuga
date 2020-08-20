@@ -116,7 +116,17 @@ class IntegrationDiscord extends BaseIntegration {
             throw new HinataError(409, 'No Such Guild');
         }
 
-        const discord_user = await discord_guild.members.fetch(user_id);
+        let discord_user;
+
+        try {
+            discord_user = await discord_guild.members.fetch(user_id);
+        } catch (e) {
+            if (e.message.includes('Unknown')) {
+                throw new HinataError(404, 'No Such User In Guild');
+            }
+
+            throw new HinataError(500, e.message);
+        }
 
         if (!discord_user) {
             throw new HinataError(404, 'No Such User In Guild');

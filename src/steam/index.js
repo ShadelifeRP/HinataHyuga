@@ -1,5 +1,6 @@
 const BaseIntegration = require('../utilities/baseintegration.js');
 const SteamAPI = require('steamapi');
+const {Hinata: HinataError} = require('../utilities/errors/index.js');
 
 class IntegrationSteam extends BaseIntegration {
     constructor(...args) {
@@ -54,7 +55,17 @@ class IntegrationSteam extends BaseIntegration {
             })),
         ];
 
-        return Promise.all(promises).then(results => Object.assign({id}, ...results));
+        return new Promise((resolve, reject) => {
+            Promise.all(promises)
+                .then(results => resolve(Object.assign({id}, ...results)))
+                .catch(e => {
+                    console.log(e);
+
+                    return reject(new HinataError(500, 'Steam Error'));
+                });
+
+        });
+
     }
 
     getSteamAPI() {
