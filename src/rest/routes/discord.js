@@ -38,8 +38,8 @@ const getDiscordUser = {
             return response.json({
                 avatar: player_data.discord.avatar,
                 roles: relevant_roles,
-                priority: priorities.length > 0 ? priorities[0] : 1,
-                name: player_data.discord.displayName,
+                priority: priorities.length > 0 ? priorities[0] : 0,
+                name: player_data.discord.name,
                 is_clean: player_data.steam.is_clean,
                 whitelisted: is_whitelisted,
                 privileges
